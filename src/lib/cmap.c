@@ -47,8 +47,8 @@ int hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, cmp_f
     return 0;
 }
 
-/// @brief Free resources acquired by the hash map
-/// @param hmap Pointer to the hashmap to free
+/// @brief Free resources acquired by a hash map
+/// @param hmap Hashmap to free
 void hash_map_free(struct hash_map* hmap) {
     struct hash_entry *hentry, *next;
 
@@ -76,10 +76,10 @@ void hash_map_free(struct hash_map* hmap) {
 }
 
 
-/// @brief Set key to given value in the hashmap
-/// @param hmap Pointer to the hashmap
-/// @param key The key to set
-/// @param value The value to assign to the key
+/// @brief Add an entry in a hashmap for a key
+/// @param hmap The hashmap to add the entry to
+/// @param key The key to set to the entry
+/// @param value The value to assign to the entry
 void hash_set(struct hash_map* hmap, char* key, void* value) {
     /*
     Algorithm - 
@@ -135,6 +135,10 @@ void hash_set(struct hash_map* hmap, char* key, void* value) {
 }
 
 
+/// @brief Get a value of an entry for a given key from a hashmap
+/// @param hmap The hashmap to search in
+/// @param key The key of the entry to search for
+/// @return Pointer to the value that was set for the given key
 void *hash_get(struct hash_map *hmap, char *key)
 {
     size_t index;
@@ -164,6 +168,10 @@ void *hash_get(struct hash_map *hmap, char *key)
     }
 }
 
+
+/// @brief Remove entry for a key from a hashmap
+/// @param hmap The hashmap to remove the entry from
+/// @param key The key of the entry to remove
 void hash_remove(struct hash_map *hmap, char *key)
 {
     size_t index;
