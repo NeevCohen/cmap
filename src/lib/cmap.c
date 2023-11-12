@@ -2,28 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// void *hash_get(struct hash_map*, char*);
-// void hash_set(struct hash_map*, char*, void*);
-// void hash_remove(struct hash_map*, char*);
-// void hash_map_init(struct hash_map*, size_t);
-// void hash_map_free(struct hash_map*);
-
-// struct hash_entry {
-//     char* key;
-//     void* data;
-//     struct hash_entry* next;
-// };
-
-// struct hash_map {
-//     struct hash_entry** buckets;
-//     size_t size;
-//     hash_function hash_func;
-//     cmp_function cmp_func;
-// };
-
-// typedef size_t (*hash_function)(char*);
-// typedef bool (*cmp_function)(char*, char*);
-
 size_t __default_hash_function(char *key) {
     return strlen(key);
 }
@@ -40,7 +18,7 @@ bool __default_cmp_function(char *key, char *other_key) {
 /// @return 0 if succeeded in allocating all of the resources needed for the hashmap, else negative return value
 int hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, cmp_function cfunc) {
     if (!hmap) {
-        printf("[hash_map_init] Error: received null hash_map\n");
+        printf("[hash_map_init] Error: received null hash map\n");
         return -1;
     }
 
@@ -141,15 +119,82 @@ void hash_set(struct hash_map* hmap, char* key, void* value) {
         hmap->entries[index] = hentry;
     } else { // Entry exists - hash colision
         cursor = hmap->entries[index];
-        while (cursor->next) {
+        while(cursor) {
             if (hmap->cmp_func(cursor->key, key)) {
                 cursor->data = value;
                 return;
+            }
+            if (!cursor->next) {
+                break;
             }
             cursor = cursor->next;
         }
         // here cursor points to the last element in the linked list, and we know it doesn't include the given key
         cursor->next = hentry;
     }
+}
 
+
+void *hash_get(struct hash_map *hmap, char *key)
+{
+    size_t index;
+    struct hash_entry *cursor;
+
+    if (!hmap) {
+        printf("[hash_get] Error: received null hash map\n");
+    }
+
+    if (!key) {
+        printf("[hash_get] Error: received null key\n");
+    }
+
+    index = hmap->hash_func(key) % hmap->size;
+
+    if (!hmap->entries[index]) { // No entry for hash
+        return NULL;
+    } else { // Entry exists - hash colision
+        cursor = hmap->entries[index];
+        while (cursor) {
+            if (hmap->cmp_func(cursor->key, key)) {
+                return cursor->data;
+            }
+            cursor = cursor->next;
+        }
+        return NULL;
+    }
+}
+
+void hash_remove(struct hash_map *hmap, char *key)
+{
+    size_t index;
+    struct hash_entry *cursor, *prev = NULL;
+
+    if (!hmap) {
+        printf("[hash_get] Error: received null hash map\n");
+    }
+
+    if (!key) {
+        printf("[hash_get] Error: received null key\n");
+    }
+
+    index = hmap->hash_func(key) % hmap->size;
+
+    if (!hmap->entries[index]) { // No entry for hash
+        return;
+    } else { // Entry exists - hash colision
+        cursor = hmap->entries[index];
+        while (cursor) {
+            if (hmap->cmp_func(cursor->key, key)) {
+                if (!prev) { // cursor is the first element in the bucket
+                    hmap->entries[index] = cursor->next;
+                } else {
+                    prev->next = cursor->next;
+                }
+                free(cursor);
+                return;
+            }
+            prev = cursor;
+            cursor = cursor->next;
+        }
+    }
 }

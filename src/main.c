@@ -12,11 +12,13 @@ int main(void) {
         return res;
     }
 
-    hash_set(&hmap, "hey", (void*)"hello");
-    hash_set(&hmap, "jjj", (void*)"there");
-    printf("[main] hmap value is %s\n", (char*)hmap.entries[3]->next->data);
+    hash_set(&hmap, "hey", (void*)"hi");
+    hash_set(&hmap, "hey", (void*)"hey");
+    hash_set(&hmap, "lol", (void*)"lol");
+    printf("Value is %s\n", (char *)hash_get(&hmap, "hey"));
+    hash_remove(&hmap, "hey");
+    printf("Value is %s\n", (char *)hash_get(&hmap, "lol"));
     hash_map_free(&hmap);
-    printf("[main] hmap entries is %p\n", hmap.entries);
 
     return 0;
 }
