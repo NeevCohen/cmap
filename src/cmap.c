@@ -1,5 +1,6 @@
 #include "cmap.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 size_t __default_hash_function(char *key) {
@@ -18,13 +19,26 @@ bool __default_cmp_function(char *key, char *other_key) {
     return strcmp(key, other_key) == 0 ? true : false;
 }
 
+struct cmap_hash_map* cmap_hash_map_new(size_t size, cmap_hash_function hfunc, cmap_cmp_function cfunc) {
+    struct cmap_hash_map *hmap;
+
+    hmap = malloc(sizeof(struct cmap_hash_map));
+    if (!hmap) {
+        printf("[cmap_hash_map_new] failed to allocate memory for new hash map");
+        return NULL;
+    }
+    memset(hmap, 0, sizeof(struct cmap_hash_map));
+    cmap_hash_map_init(hmap, size, hfunc, cfunc);
+    return hmap;
+};
+
 /// @brief Initialize a hashmap
 /// @param hmap Pointer to the hashmap to initialize
 /// @param size The size of the hashmap, length of it's `entries` array
 /// @param hfunc The hashing function to use on the keys of the hashmap
 /// @param cfunc The compare function to use when comparing keys of the hashmap
 /// @return 0 if succeeded in allocating all of the resources needed for the hashmap, else negative return value
-int cmap_hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, cmp_function cfunc) {
+int cmap_hash_map_init(struct cmap_hash_map* hmap, size_t size, cmap_hash_function hfunc, cmap_cmp_function cfunc) {
     if (!hmap) {
         printf("[hash_map_init] Error: received null hash map\n");
         return -1;
@@ -42,7 +56,7 @@ int cmap_hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, 
         size = DEFAULT_HASHMAP_SIZE;
     }
 
-    hmap->entries = malloc(sizeof(struct hash_entry) * size);
+    hmap->entries = malloc(sizeof(struct cmap_hash_entry) * size);
     if (!hmap->entries) {
         printf("[hash_map_init] Error: could not allocated memory for hash map\n");
         return -1;
@@ -57,8 +71,8 @@ int cmap_hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, 
 
 /// @brief Free resources acquired by a hash map
 /// @param hmap Hashmap to free
-void cmap_hash_map_free(struct hash_map* hmap) {
-    struct hash_entry *hentry, *next;
+void cmap_hash_map_free(struct cmap_hash_map* hmap) {
+    struct cmap_hash_entry *hentry, *next;
 
     if (!hmap) {
         printf("[hash_map_free] Warning: received null hash map\n");
@@ -88,7 +102,7 @@ void cmap_hash_map_free(struct hash_map* hmap) {
 /// @param hmap The hashmap to add the entry to
 /// @param key The key to set to the entry
 /// @param value The value to assign to the entry
-void cmap_hash_set(struct hash_map* hmap, char* key, void* value) {
+void cmap_hash_set(struct cmap_hash_map* hmap, char* key, void* value) {
     /*
     Algorithm - 
     Calculate the hash of the given key, and convert it into an index. Use the index to 
@@ -97,7 +111,7 @@ void cmap_hash_set(struct hash_map* hmap, char* key, void* value) {
     then create a new `struct hash_entry` and set the existing entry's `next` member to point to the new entry,
     creating a linked list.
     */
-    struct hash_entry *hentry = NULL, *cursor = NULL, *previous = NULL;
+    struct cmap_hash_entry *hentry = NULL, *cursor = NULL, *previous = NULL;
 
     if (!hmap) {
         printf("[hash_set] Error: received null hash map\n");
@@ -109,7 +123,7 @@ void cmap_hash_set(struct hash_map* hmap, char* key, void* value) {
         return;
     }
 
-    hentry = malloc(sizeof(struct hash_entry));
+    hentry = malloc(sizeof(struct cmap_hash_entry));
     
     if (!hentry) {
         printf("[hash_set] Error: cannot allocate new hash entry\n");
@@ -145,10 +159,10 @@ void cmap_hash_set(struct hash_map* hmap, char* key, void* value) {
 /// @param hmap The hashmap to search in
 /// @param key The key of the entry to search for
 /// @return Pointer to the value that was set for the given key
-void *cmap_hash_get(struct hash_map *hmap, char *key)
+void *cmap_hash_get(struct cmap_hash_map *hmap, char *key)
 {
     size_t index;
-    struct hash_entry *cursor;
+    struct cmap_hash_entry *cursor;
 
     if (!hmap) {
         printf("[hash_get] Error: received null hash map\n");
@@ -178,10 +192,10 @@ void *cmap_hash_get(struct hash_map *hmap, char *key)
 /// @brief Remove entry for a key from a hashmap
 /// @param hmap The hashmap to remove the entry from
 /// @param key The key of the entry to remove
-void cmap_hash_remove(struct hash_map *hmap, char *key)
+void cmap_hash_remove(struct cmap_hash_map *hmap, char *key)
 {
     size_t index;
-    struct hash_entry *cursor, *prev = NULL;
+    struct cmap_hash_entry *cursor, *prev = NULL;
 
     if (!hmap) {
         printf("[hash_get] Error: received null hash map\n");
