@@ -2,7 +2,7 @@
 
 A minimal hashmap implimintation written in C.
 
-Cmap includes all of the basic features of a hashmap - 
+Cmap includes all the basic features of a hashmap - 
 * Setting values
 * Getting values
 * Removing values
