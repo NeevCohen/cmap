@@ -33,7 +33,7 @@ The value is foo
 
 ## Restrictions
 
-Currently, cmap only supports key type of string, though in the future I do intend to implement a generic version for any type of key.
+Currently, cmap only supports mapping of `char*` -> `void*` , though in the future I do intend to implement a generic version for any type of key.
 
 ## Tests
 
