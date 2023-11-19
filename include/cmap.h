@@ -22,11 +22,11 @@ struct hash_map {
     cmp_function cmp_func;
 };
 
-void *hash_get(struct hash_map*, char*);
-void hash_set(struct hash_map*, char*, void*);
-void hash_remove(struct hash_map*, char*);
-int hash_map_init(struct hash_map*, size_t, hash_function, cmp_function);
-void hash_map_free(struct hash_map*);
+void *cmap_hash_get(struct hash_map*, char*);
+void cmap_hash_set(struct hash_map*, char*, void*);
+void cmap_hash_remove(struct hash_map*, char*);
+int cmap_hash_map_init(struct hash_map*, size_t, hash_function, cmp_function);
+void cmap_hash_map_free(struct hash_map*);
 
 
 #endif // CMAP_H

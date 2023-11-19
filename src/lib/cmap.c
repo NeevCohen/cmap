@@ -3,7 +3,15 @@
 #include <string.h>
 
 size_t __default_hash_function(char *key) {
-    return strlen(key);
+    // djb2 algorithm
+    unsigned long hash = 5381;
+    int c;
+
+    while (c = *key++) {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+
+    return hash;
 }
 
 bool __default_cmp_function(char *key, char *other_key) {
@@ -16,7 +24,7 @@ bool __default_cmp_function(char *key, char *other_key) {
 /// @param hfunc The hashing function to use on the keys of the hashmap
 /// @param cfunc The compare function to use when comparing keys of the hashmap
 /// @return 0 if succeeded in allocating all of the resources needed for the hashmap, else negative return value
-int hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, cmp_function cfunc) {
+int cmap_hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, cmp_function cfunc) {
     if (!hmap) {
         printf("[hash_map_init] Error: received null hash map\n");
         return -1;
@@ -49,7 +57,7 @@ int hash_map_init(struct hash_map* hmap, size_t size, hash_function hfunc, cmp_f
 
 /// @brief Free resources acquired by a hash map
 /// @param hmap Hashmap to free
-void hash_map_free(struct hash_map* hmap) {
+void cmap_hash_map_free(struct hash_map* hmap) {
     struct hash_entry *hentry, *next;
 
     if (!hmap) {
@@ -80,7 +88,7 @@ void hash_map_free(struct hash_map* hmap) {
 /// @param hmap The hashmap to add the entry to
 /// @param key The key to set to the entry
 /// @param value The value to assign to the entry
-void hash_set(struct hash_map* hmap, char* key, void* value) {
+void cmap_hash_set(struct hash_map* hmap, char* key, void* value) {
     /*
     Algorithm - 
     Calculate the hash of the given key, and convert it into an index. Use the index to 
@@ -89,7 +97,7 @@ void hash_set(struct hash_map* hmap, char* key, void* value) {
     then create a new `struct hash_entry` and set the existing entry's `next` member to point to the new entry,
     creating a linked list.
     */
-    struct hash_entry *hentry, *cursor;
+    struct hash_entry *hentry = NULL, *cursor = NULL, *previous = NULL;
 
     if (!hmap) {
         printf("[hash_set] Error: received null hash map\n");
@@ -124,13 +132,11 @@ void hash_set(struct hash_map* hmap, char* key, void* value) {
                 cursor->data = value;
                 return;
             }
-            if (!cursor->next) {
-                break;
-            }
+            previous = cursor;
             cursor = cursor->next;
         }
         // here cursor points to the last element in the linked list, and we know it doesn't include the given key
-        cursor->next = hentry;
+        previous->next = hentry;
     }
 }
 
@@ -139,7 +145,7 @@ void hash_set(struct hash_map* hmap, char* key, void* value) {
 /// @param hmap The hashmap to search in
 /// @param key The key of the entry to search for
 /// @return Pointer to the value that was set for the given key
-void *hash_get(struct hash_map *hmap, char *key)
+void *cmap_hash_get(struct hash_map *hmap, char *key)
 {
     size_t index;
     struct hash_entry *cursor;
@@ -172,7 +178,7 @@ void *hash_get(struct hash_map *hmap, char *key)
 /// @brief Remove entry for a key from a hashmap
 /// @param hmap The hashmap to remove the entry from
 /// @param key The key of the entry to remove
-void hash_remove(struct hash_map *hmap, char *key)
+void cmap_hash_remove(struct hash_map *hmap, char *key)
 {
     size_t index;
     struct hash_entry *cursor, *prev = NULL;

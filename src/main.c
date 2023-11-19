@@ -6,19 +6,19 @@ int main(void) {
     int res;
     struct hash_map hmap;
 
-    res = hash_map_init(&hmap, 16, NULL, NULL);
+    res = cmap_hash_map_init(&hmap, 16, NULL, NULL);
 
     if (res < 0) {
         return res;
     }
 
-    hash_set(&hmap, "hey", (void*)"hi");
-    hash_set(&hmap, "hey", (void*)"hey");
-    hash_set(&hmap, "lol", (void*)"lol");
-    printf("Value is %s\n", (char *)hash_get(&hmap, "hey"));
-    hash_remove(&hmap, "hey");
-    printf("Value is %s\n", (char *)hash_get(&hmap, "lol"));
-    hash_map_free(&hmap);
+    cmap_hash_set(&hmap, "hey", (void*)"hi");
+    cmap_hash_set(&hmap, "hey", (void*)"hey");
+    cmap_hash_set(&hmap, "lol", (void*)"lol");
+    printf("Value is %s\n", (char *)cmap_hash_get(&hmap, "hey"));
+    cmap_hash_remove(&hmap, "hey");
+    printf("Value is %s\n", (char *)cmap_hash_get(&hmap, "lol"));
+    cmap_hash_map_free(&hmap);
 
     return 0;
 }
