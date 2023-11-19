@@ -1,5 +1,5 @@
-#ifndef CMAP_H
-#define CMAP_H
+#ifndef CMAP_CMAP_H
+#define CMAP_CMAP_H
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -31,4 +31,4 @@ struct cmap_hash_map *cmap_hash_map_new(size_t, cmap_hash_function, cmap_cmp_fun
 int cmap_hash_map_init(struct cmap_hash_map *, size_t, cmap_hash_function, cmap_cmp_function);
 void cmap_hash_map_free(struct cmap_hash_map *);
 
-#endif // CMAP_H
+#endif /* CMAP_CMAP_H*/
