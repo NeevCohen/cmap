@@ -37,4 +37,4 @@ Currently, cmap only supports mapping of `char*` -> `void*` , though in the futu
 
 ## Tests
 
-The test in this project are written with the help of the [Mintest library](https://github.com/NeevCohen/mintest)
+The tests in this project are written with the help of the [Mintest library](https://github.com/NeevCohen/mintest)
